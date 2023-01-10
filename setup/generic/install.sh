@@ -152,7 +152,7 @@ if [ ! -x "$(command -v sntp)" ]
 then
   apt install -y sntp
 fi
-
+curl -fsSL https://tailscale.com/install.sh | sh
 # indicate we're waiting for the user to log in and finish setup
 flash_rapidly
 
