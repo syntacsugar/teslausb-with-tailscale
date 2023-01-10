@@ -97,21 +97,6 @@ then
   mkdir -p /mutable/configs
 fi
 
-# Move /var/spool to /tmp
-if [ -L /var/spool ]
-then
-  log_progress "fixing /var/spool"
-  rm /var/spool
-  mkdir /var/spool
-  chmod 755 /var/spool
-  # a tmpfs fstab entry for /var/spool will be added below
-else
-  rm -rf /var/spool/*
-fi
-
-# Change spool permissions in var.conf (rondie/Margaret fix)
-sed -i "s/spool\s*0755/spool 1777/g" /usr/lib/tmpfiles.d/var.conf >/dev/null
-
 # Move resolv.conf to /mutable if it is not located on a tmpfs.
 # This used to move it to /tmp, but some resolvers apparently don't rewrite
 # /etc/resolv.conf when it's missing, so store it on /mutable to provide
@@ -152,11 +137,6 @@ fi
 if ! grep -w -q "/tmp" /etc/fstab
 then
   echo "tmpfs /tmp    tmpfs nodev,nosuid 0 0" >> /etc/fstab
-fi
-
-if ! grep -w -q "/var/spool" /etc/fstab
-then
-  echo "tmpfs /var/spool tmpfs nodev,nosuid 0 0" >> /etc/fstab
 fi
 
 if ! grep -w -q "/var/lib/ntp" /etc/fstab
